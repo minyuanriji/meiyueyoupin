@@ -1,0 +1,102 @@
+{template '_header'}
+<style>
+
+</style>
+<div class='fui-page fui-page-current'>
+    <div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back"></a>
+		</div>
+		<div class="title">填写推荐人手机号</div> 
+		<div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class='fui-content navbar' >
+		<div class='fui-cell-group'>
+			
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>推荐人手机号</div>
+				<div class='fui-cell-info c000'><input type="number" class="fui-input" id="assigns" style=" text-align:left"></div>
+			</div>
+		</div>
+		<a id='btn-next' class='btn btn-danger block' style="margin-top: 0.5rem">进入商城</a>
+	</div>
+</div>
+<script language="javascript">
+    require(['tpl', 'core'], function (tpl, core) {
+
+        var isuser = true;
+      //   $('#assigns').blur(function (){
+      //       if($(this).val()) {
+      //           core.json('member/inviter/assigns', {assigns_id: $(this).val()}, function (rjson) {
+      //               if(rjson.status==0){
+      //                   FoxUI.toast.show('邀请码不能填写自己！');
+						// isuser = false; // 正确则可以通过
+                        
+      //                   return;
+      //               }else if(rjson.status==1){
+						// isuser = true; // 正确则可以通过
+                        
+      //               }else
+      //               {	
+      //                   FoxUI.toast.show('邀请码错误，未查到此人!');
+      //                   isuser = false;
+      //                   return;
+      //               }
+
+      //           }, true, true);
+      //       }else
+      //       {
+      //           FoxUI.toast.show('请输入邀请码!');
+      //           return;
+      //       }
+      //   });
+
+        $('#btn-next').click(function (){
+			if ($(this).attr('submit')) {
+				return
+			}
+            var assigns = $('#assigns').val();
+            if (!assigns) {
+                FoxUI.toast.show('请输入推荐人手机号!');
+                return;
+            }
+
+            if (!isuser) {
+                FoxUI.toast.show('请输入正确的推荐人手机号!');
+                return; 
+            }
+			
+			$(this).attr('submit', 1);
+            core.json('member/inviter/submit', {
+                assigns:assigns
+            }, function (rjson) {
+                $('#btn-next').removeAttr('submit');
+                if(rjson.status!=1){
+                    FoxUI.toast.show(rjson.result.message);
+                    return;
+                }
+                FoxUI.toast.show('填写成功!');
+                location.href = core.getUrl('member/index');
+            }, true, true);
+
+        });
+        {if $_GPC['yqm']}
+        yqm();
+        function yqm(){
+        	core.json('member/inviter/yqm', {}, function (rjson) {
+                if(rjson.status==1){
+                	if(rjson.result.message){
+                		$('#assigns').val(rjson.result.message)
+                	}
+                    return;
+                }
+            }, true, true);
+        }
+        {/if}
+      
+    });
+
+</script>
+
+
+{template '_footer'}

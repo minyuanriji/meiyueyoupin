@@ -1,0 +1,242 @@
+<div class="form-group">
+	<label class="col-lg control-label">排序</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		<input type="text" name="displayorder" class="form-control" value="{$item['displayorder']}"  />
+		<span class='help-block'>数字越大越靠前</span>
+		{else}
+		<div class='form-control-static'>{$item['displayorder']}</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label must"> 卡券名称</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		<input type="text" name="virtualcardname" class="form-control" value="{$item['virtualcardname']}" data-rule-required="true"  />
+		{else}
+		<div class='form-control-static'>{$item['virtualcardname']}</div>
+		{/if}
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-lg control-label">分类</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		<select name='catid' class='form-control select2'>
+			<option value=''></option>
+			{loop $category $k $c}
+			<option value='{$k}' {if $item['catid']==$k}selected{/if}>{$c['name']}</option>
+			{/loop}
+		</select>
+		{else}
+		<div class='form-control-static'>{if empty($item['catid'])}暂时无分类{else} {$category[$item['catid']]['name']}{/if}</div>
+		{/if}
+	</div>
+</div>
+
+
+{ife 'sale.virtualcard' $item}
+
+<div class="form-group">
+	<label class="col-lg control-label">卡券有效期</label>
+	<div class="col-sm-3">
+		<!-- <div class='input-group'>
+			<span class='input-group-addon'>
+				<label class="radio-inline" style='margin-top:-5px;' ><input type="radio" name="timelimit" value="0" {if $item['timelimit']==0}checked{/if}>获得后</label>
+			</span>
+
+			<input type='text' class='form-control' name='timedays' value="{$item['timedays']}" />
+			<span class='input-group-addon'>天内有效(空为不限时间使用)</span>
+		</div> -->
+		<div class='input-group'>
+			<span class='input-group-addon'>
+				<label class="radio-inline" style='margin-top:-5px;' ><input type="radio" name="timelimit" value="1" {if $item['timelimit']==1 || empty($item['timelimit'])}checked{/if}>在日期</label>
+			</span>
+			{php echo tpl_form_field_vcshop_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
+			<span class='input-group-addon'>内有效</span>
+		</div>
+	</div>
+</div>
+
+<!-- <div class="form-group">
+	<label class="col-lg control-label"></label>
+	<div class="col-sm-3">
+		<div class='input-group'>
+			<span class='input-group-addon'>
+				<label class="radio-inline" style='margin-top:-5px;' ><input type="radio" name="timelimit" value="1" {if $item['timelimit']==1}checked{/if}>在日期</label>
+			</span>
+			{php echo tpl_form_field_vcshop_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
+			<span class='input-group-addon'>内有效</span>
+		</div>
+	</div>
+</div> -->
+{else}
+<div class="form-group">
+	<label class="col-lg control-label">卡券有效期</label>
+ 
+	<div class="col-sm-9 col-xs-12">
+		<div class='form-control-static'>
+			{if $item['timelimit']==0}
+			{if !empty($item['timedays'])}获得后 {$item['timedays']} 天内有效{else}不限时间{/if}
+			{else}
+			{php echo date('Y-m-d',$starttime)} - {php echo date('Y-m-d',$endtime)}  范围内有效
+			{/if}</div>
+	</div>
+</div>
+{/if}
+<div class="form-group ">
+	<label class="col-lg control-label">积分是否永久有效</label>
+	<div class="col-sm-9 col-xs-12">
+	    {ife 'sale.virtualcard' $item}
+	    <label class="radio-inline"><input type="radio" name="is_alltime" value="0"  {if empty($item['is_alltime'])}checked="true"{/if}/> 否</label>
+	    <label class="radio-inline"><input type="radio" name="is_alltime" value="1" {if $item['is_alltime'] == 1}checked="true"{/if}   /> 是</label>
+	    <span class="help-block"></span>
+	    {else}
+	    <div class='form-control-static'>{if empty($item['is_alltime'])}否{else}是{/if}</div>
+	    {/if}
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-lg control-label">卡券设置</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		    <div class='input-group fixmore-input-group'>
+		        <span class='input-group-addon'>充</span>
+		        <input type='text' class='form-control' name='sendcredit1' value="{$item['sendcredit1']}"/>
+		        <span class='input-group-addon'>积分 送</span>
+		        <input type='text' class='form-control' name='sendmonth' value="{$item['sendmonth']}"/>
+		        <span class='input-group-addon'>个月 </span>
+		    </div> 
+		    {if $item['is_alltime'] == 0}
+		     	<div class='input-group fixmore-input-group' id="settint_card">
+		    {else}
+				<div class="input-group fixmore-input-group" id="settint_card" style="display: none">
+			{/if}
+		       	<span class='input-group-addon'>有效期</span>
+		       	<input type='text' class='form-control'  name='sendday'  value="1" disabled />
+		        <span class='input-group-addon'>个月</span>
+		     </div>  
+		    <span class='help-block'>例如： 10,1,1 =>  送 1 个月 10 积分，积分有效期一个月</span>
+		{else}
+		<div class='form-control-static'>
+			{if $item['sendcredit1']>0}充 {$item['sendcredit1']} 积分;{/if}
+		  	{if $item['sendmonth']>0}周期 {$item['sendmonth']} 周期;{/if}
+		  	{if $item['sendday']>0}有效期 {$item['sendday']} 个月;{/if}
+		</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label">绑定上级</label>
+	<div class="col-sm-9 col-xs-12">
+		<input type="hidden" value="{$item['agentid']}" id='agentid' name='agentid' class="form-control"  />
+		{ife 'sale.virtualcard' $item}
+		<div class='input-group'>
+            <input type="text" name="parentagent" value="{if !empty($agent)}{$agent['nickname']}/{$agent['realname']}/{$agent['mobile']}{/if}" id="parentagent" class="form-control" readonly />
+            <div class='input-group-btn'>
+                <button class="btn btn-default" type="button" onclick="chooseAgent()">选择用户</button>
+                <button class="btn btn-danger" type="button" onclick="clearAgent()">清除选择</button>
+            </div>
+        </div>
+        <span id="parentagentavatar" class='help-block' ><img  style="width:100px;height:100px;border:1px solid #ccc;padding:1px" src="{php echo tomedia($agent['avatar'])}"/></span>
+        <div id="modal-module-menus-notice"  class="modal fade" tabindex="-1">
+            <div class="modal-dialog" style='width: 920px;'>
+                <div class="modal-content">
+                    <div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>选择分销商</h3></div>
+                    <div class="modal-body" >
+                        <div class="row">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="keyword" value="" id="search-kwd-notice" placeholder="请输入分销商昵称/姓名/手机号" />
+                                <span class='input-group-btn'><button type="button" class="btn btn-default" onclick="search_members();">搜索</button></span>
+                            </div>
+                        </div>
+                        <div id="module-menus-notice" style="padding-top:5px;"></div>
+                    </div>
+                    <div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>
+                </div>
+
+            </div>
+        </div>
+		{else}
+		<div class='form-control-static'>
+            {if !empty($agent)}<img  style="width:100px;height:100px;border:1px solid #ccc;padding:1px" src="{$agent['avatar']}"/>{else}无{/if}
+        </div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label">发放总数</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		<input type="text" name="total" class="form-control" value="{$item['total']}"  />
+		{else}
+		<div class='form-control-static'>{if $item['total']==-1}无限数量{else}剩余 {$item['total']} 张{/if}</div>
+		{/if}
+	</div>
+</div>
+{if !empty($item['id'])}
+<div class="form-group">
+	<label class="col-lg control-label">剩余数量</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.virtualcard' $item}
+		<input type="text" name="xxxxxx" class="form-control" value="{$left_count}" readonly />
+		<span class='help-block' >卡券剩余可以领取或发放张数</span>
+		{else}
+		<div class='form-control-static'>{$left_count}</div>
+		{/if}
+	</div>
+</div>
+{/if}
+
+<script language='javascript'>
+
+    function search_members() {
+        if ($.trim($('#search-kwd-notice').val()) == '') {
+            Tip.focus('#search-kwd-notice', '请输入关键词');
+            return;
+        }
+        $("#module-menus-notice").html("正在搜索....")
+        $.get('{php echo webUrl('commission/agent/query')}', {
+            keyword: $.trim($('#search-kwd-notice').val()), 'op': 'query', selfid: "{$id}"
+        }, function (dat) {
+            $('#module-menus-notice').html(dat);
+        });
+    }
+    function select_member(o) {
+        $("#agentid").val(o.id);
+        $("#parentagentavatar").show();
+        $("#parentagentavatar").find('img').attr('src', o.avatar);
+        $("#parentagent").val(o.nickname + "/" + o.realname + "/" + o.mobile);
+        $("#modal-module-menus-notice .close").click();
+    }
+    function chooseAgent() {
+        popwin = $('#modal-module-menus-notice').modal();
+    }
+    function clearAgent() {
+        tip.confirm("确定清除分销商吗？(保存后生效)", function () {
+            $('#agentid').val('');
+            $('#parentagent').val('');
+            $('#parentagentavatar').hide();
+        });
+    }
+
+    $(function () {
+        $("input[name=is_alltime]").off('click').on('click',function () {
+            if($(this).val()==0){
+                $("#settint_card").show()
+            }else{
+                $("#settint_card").hide();
+            }
+        })
+    })
+
+
+</script>

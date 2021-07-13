@@ -1,0 +1,115 @@
+{template '_header'}
+<style>
+     .fui-list-group-title.lineblock2:before{
+        content: "";
+        position: absolute;
+        left: .5rem;
+        bottom: 0;
+        right: .5rem;
+        height: 1px;
+        border-top: 1px solid #ebebeb;
+        -webkit-transform-origin: 0 100%;
+        -ms-transform-origin: 0 100%;
+        transform-origin: 0 100%;
+        -webkit-transform: scaleY(0.5);
+        -ms-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+    }
+
+</style>
+<div class='fui-page order-list-page '>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">卡券列表</div>
+        <div class="fui-header-right">
+        </div>
+    </div>
+    <div id="tab" class="fui-tab fui-tab-danger">
+        <a data-tab="tab0" class="external {if $_GPC['status']=='0' || $_GPC['status']==''}active{/if}"  data-status='0'>待激活</a>
+        <a data-tab="tab1" class="external {if $_GPC['status']=='1'}active{/if}"  data-status='1'>已激活</a>
+        <a data-tab="tab2" class="external {if $_GPC['status']=='2'}active{/if}"  data-status='2'>已过期</a>
+    </div>
+
+    <div class='fui-content navbar order-list' >
+
+        <div class='content-empty' style='display:none;'>
+            <i class='icon icon-list'></i><br/>暂时没有任何充值卡
+        </div>
+        <div  id="container"></div>
+        <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+    </div>
+
+    <script id='tpl_order_index_list' type='text/html'>
+
+        <%each list as card%>
+            <div class='fui-list-group'>
+                <div class='fui-list' style="padding-bottom: unset;">
+                    <div class="fui-list-inner">
+                        <div class="row">
+                            <div class="row-text" style="font-size: .76rem"><%card.title%></div>
+                        </div>
+                    </div>
+                    <div class="fui-list-angle" style="margin: 0;font-size: .6rem; <%if card.used==1%>color:#ff8000;<%else if card.used==0%>color:#ff5555;<%/if%>"><%card.statusstr%></div>
+                </div>
+                <%if card.used == 1%>
+                <div class="fui-list" style="height: 2.4rem">
+                    <div class="fui-list-media">
+                        <img src="<%card.user.avatar%>" class="round" style='width:1.4rem;height:1.4rem;border-radius: 50%' onerror="this.src='../addons/vcshop/static/images/noface.png';">
+                    </div>
+                    <div class="fui-list-inner">
+                        <div class="row">
+                            <div class="row-text" style="font-size: .6rem"><%card.user.nickname%></div>
+                        </div>
+                    </div>
+                </div>
+                <%/if%>
+                <div class='fui-list'>
+                    <span class="left" style="font-size: .55rem;color: #999;line-height: .95rem">
+                        兑换卡号：<%card.cardsn%><br>
+                        兑换卡密：<%card.cardkey%>
+                    </span>
+                </div>
+                <%if card.used == 1%>
+                <div class='fui-list'>
+                    <span class="left" style="font-size: .55rem;color: #999;line-height: .95rem">
+                        激活时间：<%card.usetime%>
+                    </span>
+                </div>
+                <%/if%>
+                <%if card.curstatus == 0%>
+                <div class='fui-list' style="font-size: .55rem;justify-content: flex-end;border-top: .025rem solid #ebebeb;">
+                    <div class="btn btn-sm btn-warning js-clip" data-url="兑换卡号：<%card.cardsn%>
+兑换卡密：<%card.cardkey%>">
+                        复制卡密
+                    </div>
+                    <!-- <div class="btn btn-sm btn-success share-link" style="margin-left: .3rem" data-cid="<%card.id%>">
+                        分享链接
+                    </div> -->
+                </div>
+                <%/if%>
+            </div>
+        <%/each%>
+    </script>
+    <script language='javascript'>
+        require(['biz/sale/virtualcard/list'], function (modal) {
+            modal.init();
+        });
+    </script>
+
+    <script language='javascript' type="text/javascript">
+
+        $(document).on('click', '.fui-list-group .share-link', function(event) {
+            event.preventDefault();
+            var id = $(this).data('cid');
+            // alert(11);
+            
+        });
+
+    </script>
+
+    {php $this->footerMenus()}
+</div>
+
+{template '_footer'}

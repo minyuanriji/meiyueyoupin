@@ -1,0 +1,179 @@
+{template '_header'}
+<div class='page-header'>
+	当前位置：<span class="text-primary">虚拟卡券管理 </span>
+</div>
+
+
+<div class="page-content">
+	<form action="./index.php" method="get" class="form-horizontal table-search" role="form" id="form1">
+		<input type="hidden" name="c" value="site" />
+		<input type="hidden" name="a" value="entry" />
+		<input type="hidden" name="m" value="vcshop" />
+		<input type="hidden" name="do" value="web" />
+		<input type="hidden" name="r" value="sale.virtualcard" />
+		<div class="page-toolbar">
+
+			<span class='col-sm-4'>
+					{ifp 'sale.virtualcard.add'}
+						<a class='btn btn-warning btn-sm' href="{php echo webUrl('sale/virtualcard/add',array('type'=>1))}"><i class='fa fa-plus'></i> 添加充值卡券</a>
+					{/if}
+			</span>
+			<div class="col-sm-8 pull-right">
+				<div class='input-group input-group-sm' style='float:left;'   >
+					{php echo tpl_daterange('time', array('placeholder'=>'创建时间'),true);}
+				</div>
+
+				<div class="input-group">
+					<span class="input-group-select">
+							<select name='catid' class='form-control  input-sm select-md'   style="width:100px;"  >
+								<option value=''>分类</option>
+								{loop $category $k $c}
+								<option value='{$k}' {if $_GPC['catid']==$k}selected{/if}>{$c['name']}</option>
+								{/loop}
+							</select>
+					</span>
+					<input type="text" class="form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="虚拟卡券名称"> <span class="input-group-btn">
+
+                                     <button class="btn btn-primary" type="submit"> 搜索</button> </span>
+				</div>
+
+			</div>
+		</div>
+	</form>
+
+	{if count($list)>0}
+	<div class="page-table-header">
+		<input type="checkbox">
+			<span class="btn-group">
+				{ifp 'sale.virtualcard.delete'}
+				<button class="btn btn-default btn-sm dropdown-toggle btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('sale/virtualcard/delete')}">
+					<i class='icow icow-shanchu1'></i>删除
+				</button>
+				{/if}
+			</span>
+	</div>
+	<table class="table table-hover table-responsive">
+		<thead class="navbar-inner" >
+		<tr>
+			<th style="width: 50px;"><input type='checkbox' /></th>
+			<th style="">排序</th>
+			<th style="">虚拟卡券名称</th>
+			<th style="" >是否永久</th>
+			<th style=" ">剩余数量</th>
+			<th style="">积分</th>
+			<th style="">创建时间</th>
+			<th style="">二维码</th>
+			<th style="width: 180px;">操作</th>
+		</tr>
+		</thead>
+		<tbody>
+		{loop $list $row}
+		<tr>
+			<td>
+				<input type='checkbox'   value="{$row['id']}"/>
+			</td>
+			<td>
+				{ifp 'sale.virtualcard.edit'}
+				<a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('sale/virtualcard/displayorder',array('id'=>$row['id']))}" >{$row['displayorder']}</a>
+				{else}
+				{$row['displayorder']}
+				{/if}
+			</td>
+			<td>
+				{$row['virtualcardname']}
+			</td>
+			<td>
+				{if !empty($row['is_alltime'])}
+				是
+                {else}
+                否
+                {/if}
+			</td>
+			<td>
+				{ifp 'virtualcard.log.view'}
+				<a href="{php echo webUrl('sale/virtualcard/log',array('virtualcardid'=>$row['id']))}"
+				   data-toggle='popover'
+				   data-html='true'
+				   data-trigger='hover'
+				   data-content="已使用: {$row['usetotal']} <br/> 已发出: {$row['gettotal']}">
+					{if $row['total']==-1}无限{else}{php echo $row['total'] -  $row['gettotal']}{/if} <i class='fa fa-question-circle'></i>
+				</a>
+				{else}
+				<span>{if $row['total']==-1}无限{else}{php echo $row['total'] -  $row['gettotal']}{/if}</span>
+				{/if}
+			</td>
+			<td>
+				{$row['sendcredit1']}
+			</td>
+			
+			<td>{php echo date('Y-m-d',$row['createtime'])}<br/>{php echo date('H:i',$row['createtime'])}</td>
+			<td>
+                <img src='{$row['qrcode']}' width='130' alt='链接二维码'>
+            </td>
+			<td>
+
+				<div class="btn-group">
+					{ifp 'sale.virtualcard.edit'}
+					<a class='btn btn-default btn-operation btn-op' href="{php echo webUrl('sale/virtualcard/edit',array('id' => $row['id']));}">
+						 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'sale.virtualcard.edit'}编辑{else}查看{/if}">
+								<i class='icow icow-bianji2'></i>
+						   </span>
+					</a>
+
+					{/if}
+					<!-- <a href="javascript:;" data-url="{php echo mobileUrl('sale/virtualcard/detail', array('id' => $row['id']),true)}"  class="btn btn-default js-clip btn-operation btn-op">
+						 <span data-toggle="tooltip" data-placement="top"  data-original-title="复制链接">
+							   <i class='icow icow-lianjie2'></i>
+						   </span>
+					</a>
+					<a href="javascript:void(0);" class="btn btn-default btn-operation btn-op" data-toggle="popover" data-trigger="hover" data-html="true"
+					   data-content="<img src='{$row['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
+						<i class="icow icow-erweima3"></i>
+					</a> -->
+					<a href="{php echo webUrl('sale/virtualcard/log', array('id' => $row['id']),true)}" class="btn btn-default btn-operation btn-op" data-toggle="popover" data-trigger="hover" data-html="true"
+					   data-content="查看领取记录" data-placement="auto right">
+						<i class="icow icow-tuiguang"></i>
+					</a>
+					{ifp 'sale.virtualcard.delete'}
+					<a class='btn btn-default btn-operation btn-op' data-toggle='ajaxRemove' href="{php echo webUrl('sale/virtualcard/delete',array('id' => $row['id']));}" data-confirm="确定要删除该虚拟卡券吗？">
+						 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+								<i class='icow icow-shanchu1'></i>
+						   </span>
+					</a>
+
+					{/if}
+
+				</div>
+
+
+			</td>
+		</tr>
+		{/loop}
+		</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="3">
+				<input type="checkbox">
+				<span class="btn-group">
+					{ifp 'sale.virtualcard.delete'}
+					<button class="btn btn-default btn-sm dropdown-toggle btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('sale/virtualcard/delete')}">
+						<i class='icow icow-shanchu1'></i>删除
+					</button>
+					{/if}
+				</span>
+			</td>
+			<td colspan="6" style="text-align: right">{$pager}</td>
+		</tr>
+	</tfoot>
+	</table>
+	{else}
+	<div class='panel panel-default'>
+		<div class='panel-body' style='text-align: center;padding:30px;'>
+			暂时没有任何虚拟卡券!
+		</div>
+	</div>
+	{/if}
+	</form>
+</div>
+{template '_footer'}
+<!--青岛易联互动网络科技有限公司-->

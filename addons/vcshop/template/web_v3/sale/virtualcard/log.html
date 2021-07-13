@@ -1,0 +1,355 @@
+{template '_header'}
+<div class="page-header">
+	
+	<!--<span class='pull-right'>-->
+		<!--<a class="btn btn-default  btn-sm" href="{php echo webUrl('sale/virtualcard/virtualcard')}">返回列表</a>-->
+	<!--</span>-->
+    当前位置：<span class="text-primary">虚拟卡券记录 <small>{if !empty($virtualcard)}虚拟卡券: {$virtualcard['virtualcardname']}{/if}</small></span>
+</div>
+
+
+<div class="page-content">
+    <form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
+        <input type="hidden" name="c" value="site" />
+        <input type="hidden" name="a" value="entry" />
+        <input type="hidden" name="m" value="vcshop" />
+        <input type="hidden" name="do" value="web" />
+        <input type="hidden" name="r" value="sale.virtualcard.log" />
+        <input type="hidden" name="id" value="{$virtualcardid}" />
+        {if empty($virtualcard)}
+        <div class="page-toolbar">
+            <div class="pull-left">
+                <div class='input-group input-group-sm'  style='float:left;'  >
+                    {php echo tpl_daterange('time', array('sm'=>true,'placeholder'=>'获得时间'),true);}
+                </div>
+                <div class='input-group input-group-sm'  style='float:left;'  >
+                    {php echo tpl_daterange('time1', array('sm'=>true,'placeholder'=>'使用时间'),true);}
+                </div>
+            </div>
+            <div class="">
+                <div class="input-group">
+                    <span class="input-group-select">
+                           <select name='used' class='form-control'>
+                               <option value=''>使用状态</option>
+                               <option value='0' {if $_GPC['used']=='0'}selected{/if}>未使用</option>
+                               <option value='1' {if $_GPC['used']=='1'}selected{/if}>已使用</option>
+                           </select>
+                    </span>
+                    <span class="input-group-select">
+                           <select name='used' class='form-control'>
+                               <option value=''>发放状态</option>
+                               <option value='0' {if $_GPC['sended']=='0'}selected{/if}>未发放</option>
+                               <option value='1' {if $_GPC['sended']=='1'}selected{/if}>已发放</option>
+                           </select>
+                    </span>
+                    <span class="input-group-select">
+                         <select name='searchfield' class='form-control'>
+                             <option value='virtualcard' {if $_GPC['searchfield']=='virtualcard'}selected{/if}>虚拟卡券</option>
+                             <option value='member' {if $_GPC['searchfield']=='member'}selected{/if} >会员</option>
+                         </select>
+                    </span>
+                    <input type="text" class=" form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="请输入关键词"> 
+                    <span class="input-group-btn">
+                        <button class="btn  btn-primary" type="submit"> 搜索</button>
+                        {ifp 'sale.virtualcard.log.export'}
+                            <button type="submit" name="export" value="1" class="btn btn-success ">导出</button>
+                        {/if}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {else}
+        <div class="page-toolbar row m-b-sm m-t-sm">
+            <div class="col-sm-12 pull-right">
+                <div class='input-group input-group-sm'  style='float:left;'  >
+                    {php echo tpl_daterange('time', array('sm'=>true,'placeholder'=>'获得时间'),true);}
+                </div>
+                <div class='input-group input-group-sm'  style='float:left;'  >
+                    {php echo tpl_daterange('time1', array('sm'=>true,'placeholder'=>'使用时间'),true);}
+                </div>
+                <div class="input-group">
+
+
+
+                    <button class="btn btn-sm btn-primary" type="submit"> 搜索</button>
+                    {ifp 'sale.virtualcard.log.export'}
+                    <button type="submit" name="export" value="1" class="btn btn-success btn-sm">导出</button>
+                    {/if}
+
+                </div>
+
+            </div></div>
+        {/if}
+
+    </form>
+    {if count($list)>0}
+    <table class="table table-hover table-responsive">
+        <thead class="navbar-inner" >
+        <tr>
+            <th style="width:25px;"></th>
+            <th style='width:180px;'>虚拟卡券名称</th>
+            <th style=''>绑定上级</th>
+            <th style=''>领取人</th>
+            <th style=''>卡号</th>
+            <th style=''>兑换码</th>
+            <th style=''>获得时间</th>
+            <th style=''>使用时间</th>
+            <!-- <th style=''>二维码</th> -->
+            <th style=''>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {loop $list $row}
+        <tr>
+            <td>
+                <input type='checkbox'   value="{$row['id']}" class="checkone"/>
+            </td>
+            <td>
+                {$row['virtualcardname']}
+            </td>
+            <td>
+                {if !empty($row['agentid'])}
+                    <span data-toggle='tooltip'  title='{$row['agent']['nickname']}'>
+                        <img class="radius50" src='{php echo tomedia($row['agent']['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/vcshop/static/images/noface.png'" />
+                        {if empty($row['agent']['nickname'])}未更新{else}{$row['agent']['nickname']}{/if}
+                    </span>
+                {else}
+                    无指定
+                {/if}
+            </td>
+            <td>
+                {if !empty($row['openid'])}
+                    <span data-toggle='tooltip'  title='{$row['member']['nickname']}'>
+                        <img class="radius50" src='{php echo tomedia($row['member']['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/vcshop/static/images/noface.png'" />
+                        {if empty($row['member']['nickname'])}未更新{else}{$row['member']['nickname']}{/if}
+                    </span>
+                {else}
+                    暂无
+                {/if}
+            </td>
+            <td>{$row['cardsn']}</td>
+            <td>{$row['cardkey']}</td>
+            <td>
+                {if !empty($row['gettime'])}
+                {php echo date('Y-m-d',$row['gettime'])}<br/>{php echo date('H:i',$row['gettime'])}
+                {else}
+                ---
+                {/if}
+            </td>
+            <td>
+                {if empty($row['usetime'])}
+                ---
+                {else}
+                {php echo date('Y-m-d',$row['usetime'])}<br/>{php echo date('H:i',$row['usetime'])}
+                {/if}
+            </td>
+            <!-- <td>
+                {if $row['used'] == 0}
+                <img src='{$row['qrcode']}' width='130' alt='链接二维码'>
+                {/if}
+            </td> -->
+            <td>
+                <a href="javascript:;" data-url="卡号：{$row['cardsn']}兑换码：{$row['cardkey']}"  class="btn btn-default js-clip btn-operation btn-op">
+                    <span data-toggle="tooltip" data-placement="top"  data-original-title="复制卡号与兑换码">
+                        <i class='icow icow-lianjie2'></i>
+                    </span>
+                </a>
+                <a class='btn btn-default btn-operation btn-op' data-toggle='ajaxRemove' href="{php echo webUrl('sale/virtualcard/log/togglestatus',array('id' => $row['id'],'status' => '2'));}" data-confirm="确定要删除该卡券吗？">
+                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                        <i class='icow icow-shanchu1'></i>
+                    </span>
+                </a>
+                {if $row['status'] == 0}
+                <a class='btn btn-default btn-operation btn-op' data-toggle='ajaxRemove' href="{php echo webUrl('sale/virtualcard/log/togglestatus',array('id' => $row['id'],'status' => '1'));}" data-confirm="确定要解冻该卡券吗？">
+                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="解冻">
+                        <i class='icow icow-chenggong'></i>
+                    </span>
+                </a>
+                {else}
+                <a class='btn btn-default btn-operation btn-op' data-toggle='ajaxRemove' href="{php echo webUrl('sale/virtualcard/log/togglestatus',array('id' => $row['id'],'status' => '0'));}" data-confirm="确定要禁用该卡券吗？">
+                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="禁用">
+                        <i class='icow icow-error'></i>
+                    </span>
+                </a>
+                {/if}
+                {if $row['used'] == 0}
+                <a class='btn btn-default btn-operation btn-op' onclick="changeagent({$row['id']})">
+                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="更改归属人">
+                        <i class='icow icow-bianji'></i>
+                    </span>
+                </a>
+                {/if}
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    <input type="checkbox">
+                    <span class="btn-group">
+                        {ifp 'sale.virtualcard.edit'}
+                        <button class="btn btn-default btn-sm dropdown-toggle btn-operation" type="button" onclick="chooseAgent()">
+                            <i class='icow icow-shanchu1'></i>批量更改归属人
+                        </button>
+                        {/if}
+                    </span>
+                </td>
+                <td colspan="6" style="text-align: right">{$pager}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    {else}
+    <div class='panel panel-default'>
+        <div class='panel-body' style='text-align: center;padding:30px;'>
+            暂时没有任何发放使用记录!
+        </div>
+    </div>
+    {/if}
+</div>
+<div id="modal-module-menus-notice"  class="modal fade" tabindex="-1">
+    <div class="modal-dialog" style='width: 920px;'>
+        <div class="modal-content">
+            <div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>选择分销商</h3></div>
+            <div class="modal-body" >
+                <div class="row">
+                    <div class="input-group">
+                        <input type="hidden" name="" id="agentinput">
+                        <input type="hidden" name="" id="anameinput">
+                        <input type="hidden" name="" id="dataid">
+                        <input type="text" class="form-control" name="keyword" value="" id="search-kwd-notice" placeholder="请输入分销商昵称/姓名/手机号" />
+                        <span class='input-group-btn'><button type="button" class="btn btn-default" onclick="search_members();">搜索</button></span>
+                    </div>
+                </div>
+                <div id="module-menus-notice" style="padding-top:5px;"></div>
+            </div>
+            <div class="modal-footer">
+                <span id="addtemp" class="btn btn-primary span2"  style="display: none;">确认选择</span>
+                <span id="edittemp" class="btn btn-primary span2" style="display: none;">确认选择</span>
+                <a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script language='javascript'>
+
+    function search_members() {
+        if ($.trim($('#search-kwd-notice').val()) == '') {
+            Tip.focus('#search-kwd-notice', '请输入关键词');
+            return;
+        }
+        $("#module-menus-notice").html("正在搜索....")
+        $.get('{php echo webUrl('commission/agent/query')}', {
+            keyword: $.trim($('#search-kwd-notice').val()), 'op': 'query', selfid: "{$id}"
+        }, function (dat) {
+            $('#module-menus-notice').html(dat);
+        });
+    }
+    function select_member(o) {
+        $('#search-kwd-notice').val(o.nickname + "/" + o.realname + "/" + o.mobile);
+        $("#agentinput").val(o.id);
+        $("#anameinput").val(o.nickname);
+        // $("#parentagentavatar").show();
+        // $("#parentagentavatar").find('img').attr('src', o.avatar);
+        // $("#parentagent").val(o.nickname + "/" + o.realname + "/" + o.mobile);
+        // $("#modal-module-menus-notice .close").click();
+    }
+    function chooseAgent() {
+        popwin = $('#modal-module-menus-notice').modal();
+        $("#addtemp").show();
+    }
+
+    function changeagent(id) {
+        popwin = $('#modal-module-menus-notice').modal();
+        $("#edittemp").show();
+        $("#dataid").val(id);
+    }
+
+    function clearAgent() {
+        tip.confirm("确定清除分销商吗？(保存后生效)", function () {
+            // $('#agentid').val('');
+            // $('#parentagent').val('');
+            // $('#parentagentavatar').hide();
+        });
+    }
+
+    $("#addtemp").click(function () {
+
+        var _this = $(this);
+        if(_this.attr('stop')){
+            return;
+        }
+        var ids = [];
+        $(".checkone").each(function () {
+            var checked = $(this).is(":checked");
+            var id = $(this).val();
+            if(checked && id){
+                ids.push(id);
+            }
+        });
+        if(ids.length<1){
+            tip.msgbox.suc("请选择要批量操作的卡券");
+            return;
+        }
+
+        var agentid = $("#agentinput").val();
+        var agentname = $("#anameinput").val();
+
+        tip.confirm("确定要将选中卡券归属移动到 "+agentname+" 吗？", function () {
+            _this.attr('stop', 1).text("操作中...");
+            $.post(biz.url('sale/virtualcard/log/batchange'),{
+                ids: ids,
+                agentid: agentid
+            }, function (ret) {
+                // $("#addtemp").hide();
+                // $("#edittemp").hide();
+                $("#modal-module-menus-notice .close").click();
+                if(ret.status==1){
+                    tip.msgbox.suc("操作成功");
+                    setTimeout(function () {
+                        location.reload();
+                    },1000);
+                }else{
+                    tip.msgbox.err(ret.result.message);
+                }
+            }, 'json')
+        });
+    })
+
+    $("#edittemp").click(function () {
+
+        var _this = $(this);
+        if(_this.attr('stop')){
+            return;
+        }
+
+        var agentid = $("#agentinput").val();
+        var agentname = $("#anameinput").val();
+        var dataid = $("#dataid").val();
+
+        tip.confirm("确定要将选中卡券归属移动到 "+agentname+" 吗？", function () {
+            _this.attr('stop', 1).text("操作中...");
+            $.post(biz.url('sale/virtualcard/log/changeagent'),{
+                dataid: dataid,
+                agentid: agentid
+            }, function (ret) {
+                $("#addtemp").hide();
+                $("#edittemp").hide();
+                $("#modal-module-menus-notice .close").click();
+                if(ret.status==1){
+                    tip.msgbox.suc("操作成功");
+                    setTimeout(function () {
+                        location.reload();
+                    },1000);
+                }else{
+                    tip.msgbox.err(ret.result.message);
+                }
+            }, 'json')
+        });
+    })
+
+</script>
+{template '_footer'}
+<!--NDAwMDA5NzgyNw==-->

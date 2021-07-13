@@ -1,0 +1,67 @@
+{template '_header'}
+<style>
+    .fui-list-inner .text{
+        color: #999;
+        font-size: .6rem;
+    }
+    .fui-list-inner .title{
+        font-size: .65rem;
+    }
+    .fui-list.goods-item{
+        height: 3rem;
+    }
+    .fui-list{
+        background: #fff;
+    }
+</style>
+<div class='fui-page  fui-page-current member-log-page'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">{php echo $this->set['texts']['quota']}明细</div> 
+    </div> 
+<!--jie  20191125 循环顶部菜单 s -->
+    <div class='fui-content navbar' >
+        {if $_W['shopset']['trade']['withdraw']}
+        <div id="tab" class="fui-tab fui-tab-danger">
+            {loop $quota $quotas}
+                <a data-tab="tab1"  class="external" data-type='{$quotas['agentlevel']}'>{$quotas['levelname']}{php echo $this->set['texts']['quota']}({$quotas['num']})</a>
+            {/loop}
+        </div>
+        {/if}
+<!-- jie 20191125 循环顶部菜单 e -->
+
+        <div class='content-empty' style='display:none;'>
+            <i class='icon icon-searchlist'></i><br/>暂时没有任何记录!
+        </div>
+
+        <div class='fui-list-group container' style="display:none;background: #f3f3f3"></div>
+        <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+    </div>
+
+    <script id="tpl_member_log_list" type="text/html">
+<!-- jie 20192225 循环内容 s -->
+        <%each list as log%>
+        <div class="fui-list goods-item <%if log.type==1%>no-border<%/if%>" <%if log.type==1%>style="height:2.75rem"<%/if%>>
+
+            <div class="fui-list-inner">
+                <div class='title'>
+                    <%log.openid%><%log.remark%>
+                </div>
+                <div class='text'><%log.createtime%></div>
+            </div>
+            <div class='fui-list-angle'>
+                <div style="font-size: .75rem;color: #000;"><%if log.num<0 %><% log.num %><%else%>+<% log.num %><%/if%>名额</div>
+            </div>
+        </div>
+        <%/each%>
+    </script>
+<!-- jie 20192225 循环内容 e -->
+    <script language='javascript'>require(['../addons/vcshop/plugin/commission/static/js/quota.js'], function (modal) {
+        modal.init({type:"{$_GPC['type']}"});
+    });</script>
+    {php $this->footerMenus()}
+</div>
+
+{template '_footer'}

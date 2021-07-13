@@ -1,0 +1,94 @@
+{template '_header'}
+<div class="page-header">
+    当前位置：<span class="text-primary">星级</span>
+</div>
+<div class="page-content">
+    <div class="page-toolbar">
+        <span class=''>
+		{ifp 'commission.star.add'}
+            <a class='btn btn-primary btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('commission/star/add')}"><i class="fa fa-plus"></i> 添加新星级</a>
+		{/if}
+    	</span>
+     </div>
+    <div class='alert alert-primary'>
+        提示: 商品指定的佣金金额的优先级仍是最高的，也就是说只要商品指定了佣金金额就按商品的佣金金额来计算，不受等级影响
+    </div>
+    <table class="table table-responsive table-hover">
+        <thead>
+            <tr>
+                <th style='width:5%;'>星级权重</th>
+                <th style='width:20%;'>星级名称/绑定等级</th>
+                <th style='width:10%;'>一级分成比例</th>
+                <th style='width:10%;'>团队分成比例</th>
+                <th style='width:10%;'>团队管理比例</th>
+                <th style='width:30%;'>达标条件</th>
+                <th style="width:10%;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {loop $list $row}
+            <tr>
+                <td>{$row['level']}</td>
+                <td>
+                    {$row['levelname']}
+                    <span class="label label-primary">{$row['bindlevelname']}</span>
+                    {if $row['is_default']}<span class="label label-success">[默认]</span>{/if}
+
+                </td>
+                <td>{php echo number_format((float)$row['commission1'],2)}元</td>
+                <td>
+                    {if $row['is_team'] == 1}
+                    {php echo number_format((float)$row['commissionteam'],2)}元
+                    {else}无{/if}
+                </td>
+                <td>
+                    {if $row['is_team'] == 1}
+                    {php echo number_format((float)$row['commissioncharge'],2)}%
+                    {else}无{/if}
+                </td>
+                
+                <td>
+                    {if empty($row['downcount']) && empty($row['downlevelname']) && empty($row['teamcount']) && empty($row['teamlevelname'])}
+                        默认
+                    {else}
+                        {if !empty($row['downcount']) && !empty($row['downlevelname'])}
+                            直推满{$row['downcount']}个{$row['downlevelname']}
+                        {/if}
+                        {if !empty($row['teamcount']) && !empty($row['teamlevelname'])}
+                            且团队满{$row['teamcount']}个{$row['teamlevelname']}
+                        {/if}
+                    {/if}
+
+                </td>
+                
+                <td>
+					{ifp 'commission.star.edit'}
+                    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxModal'  href="{php echo webUrl('commission/star/edit', array('id' => $row['id']))}">
+                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'commission.star.edit'}编辑{else}查看{/if}">
+                            {ifp 'commission.star.edit'}
+                            <i class='icow icow-bianji2'></i>
+                            {else}
+                            <i class='icow icow-chakan-copy'></i>
+                            {/if}
+                       </span>
+                    </a>
+                    {/if} 
+                    {if $row['id']!='default'}
+					 {ifp 'commission.star.delete'}
+						<a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{php echo webUrl('commission/star/delete', array('id' => $row['id']))}" data-confirm="确认删除此等级吗？">
+                            <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                            <i class='icow icow-shanchu1'></i>
+                       </span>
+                        </a>
+                </td>
+				{/if}
+				{/if}
+
+            </tr>
+            {/loop}
+        
+        </tbody>
+    </table>
+</div>
+{template '_footer'}
+

@@ -1,0 +1,57 @@
+{template '_header'}
+<div class='fui-page  fui-page-current member-log-page'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">{if $_W['shopset']['trade']['withdraw']}{$_W['shopset']['trade']['moneytext']}转账记录{/if}</div>
+    </div>
+
+    <div class='fui-content navbar' >
+
+        <div class='content-empty' style='display:none;'>
+            <i class='icon icon-searchlist'></i><br/>暂时没有任何记录!
+        </div>
+
+        <div class='fui-list-group container' style="display:none;"></div>
+        <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+    </div>
+
+    <script id="tpl_member_log_list" type="text/html">
+
+        <%each list as log%>
+        <div class="fui-list goods-item">
+
+            <div class="fui-list-inner">
+                <div class='title'>
+                    <%if log.type == 1%>转让：<%/if%>
+                    <%if log.type == 2%>接收：<%/if%>
+                    <%log.money%> {$_W['shopset']['trade']['moneytext']}
+                </div>
+                <div class='text'>
+                    <%if log.type == 1%>接收<%/if%>
+                    <%if log.type == 2%>转让<%/if%>
+                    会员： <%log.to_member.nickname%>
+                </div>
+                <div class='text'><%log.createtime%></div>
+            </div>
+            <div class='fui-list-angle'>
+                <%if log.status==1%>
+                <span  class='fui-label fui-label-success'>成功</span>
+                <%/if%>
+                <%if log.status==-1%>
+                <span  class='fui-label fui-label-danger'><%if log.type==1%>失败<%/if%></span>
+                <%/if%>
+            </div>
+
+        </div>
+        <%/each%>
+    </script>
+
+    <script language='javascript'>require(['biz/member/transfer_log'], function (modal) {
+        modal.init({type:"{$_GPC['type']}"});
+    });</script>
+    {php $this->footerMenus()}
+</div>
+
+{template '_footer'}

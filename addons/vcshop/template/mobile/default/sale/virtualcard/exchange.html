@@ -1,0 +1,68 @@
+{template '_header'}
+<style>
+
+</style>
+<div class='fui-page fui-page-current'>
+    <div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back"></a>
+		</div>
+		<div class="title">充值卡</div> 
+		<div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class='fui-content navbar' >
+        <div class="fui-title">
+            请输入卡片兑换码
+        </div>
+		<div class='fui-cell-group'>
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>卡号</div>
+				<div class='fui-cell-info c000'><input type="text" class="fui-input" id="cardsn" style="text-align:left" value="{$cardsn}"></div>
+			</div>
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>兑换码</div>
+				<div class='fui-cell-info c000'><input type="text" class="fui-input" id="cardkey" style="text-align:left" value="{$cardkey}"></div>
+			</div>
+		<a id='btn-next' class='btn btn-danger block' style="margin-top: 0.5rem">确认兑换</a>
+        <!-- <a id='btn-log' class='btn btn-info block' style="margin-top: 0.5rem" href="{php echo mobileUrl('member/transfer_log')}">转账记录</a> -->
+	</div>
+</div>
+<script language="javascript">
+    require(['tpl', 'core'], function (tpl, core) {
+
+        $('#btn-next').click(function (){
+			if ($(this).attr('submit')) {
+				return
+			}
+            var cardsn = $('#cardsn').val();
+            if (!cardsn) {
+                FoxUI.toast.show('请输入卡号!');
+                return;
+            }
+            var cardkey = $('#cardkey').val();
+            if (!cardkey) {
+                FoxUI.toast.show('请输入兑换码!');
+                return;
+            }
+
+			$(this).attr('submit', 1);
+            core.json('sale/virtualcard/exchange/submit', {
+                cardsn: cardsn,
+                cardkey:cardkey
+            }, function (rjson) {
+                $('#btn-next').removeAttr('submit');
+                if(rjson.status!=1){
+                    FoxUI.toast.show(rjson.result.message);
+                    return;
+                }
+                FoxUI.toast.show('兑换成功!');
+                location.href = core.getUrl('member');
+            }, true, true);
+
+        });
+        
+      
+    });
+
+</script>
+{template '_footer'}

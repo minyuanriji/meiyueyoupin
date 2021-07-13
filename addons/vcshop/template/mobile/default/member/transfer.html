@@ -1,0 +1,142 @@
+{template '_header'}
+<style>
+
+</style>
+<div class='fui-page fui-page-current'>
+    <div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back"></a>
+		</div>
+		<div class="title">{$_W['shopset']['trade']['moneytext']}转让</div> 
+		<div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class='fui-content navbar' >
+		<div class='fui-cell-group'>
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>当前{$_W['shopset']['trade']['moneytext']}</div>
+				<div class='fui-cell-info c000'>￥{php echo number_format($credit,2)}</div>
+			</div>
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>受让人手机</div>
+				<div class='fui-cell-info c000'><input type="number" class="fui-input" id="assigns" style="text-align:left"></div>
+			</div>
+			<div class='fui-cell'>
+				<div class='fui-cell-label'>转账金额</div>
+				<div class='fui-cell-info c000'>￥<input type="number" class="fui-input" id="money" value="" style="text-align:left"></div>
+			</div>
+
+<!--
+请输入100的整数倍数字{if $set['transfermoney']>0}，最低限额{$set['transfermoney']}{/if}
+-->
+			<div class='fui-cell m-info' >
+				<div class='fui-cell-label'>用户ID</div>
+				<div class='fui-cell-info c000'><span id="m-id"></span></div>
+			</div>
+			<div class='fui-cell m-info'>
+				<div class='fui-cell-label'>用户昵称</div>
+				<div class='fui-cell-info c000'><span id="m-nickname"></span></div>
+			</div>
+		</div>
+		<a id='btn-next' class='btn btn-danger block' style="margin-top: 0.5rem">确认转账</a>
+        <a id='btn-log' class='btn btn-info block' style="margin-top: 0.5rem" href="{php echo mobileUrl('member/transfer_log')}">转账记录</a>
+	</div>
+</div>
+<script language="javascript">
+    require(['tpl', 'core'], function (tpl, core) {
+
+        var isuser = true;
+        $('#assigns').blur(function (){
+            if($(this).val()) {
+                core.json('member/transfer/assigns', {assigns_id: $(this).val()}, function (rjson) {
+                    if(rjson.status==0){
+                        FoxUI.toast.show('受让人不可以是您自己！');
+						isuser = false; // 正确则可以通过
+                        $('#m-id').text('');
+                        $('#m-nickname').text('');
+                        return;
+                    }else if(rjson.status==1){
+						isuser = true; // 正确则可以通过
+                        $('.m-info').show();
+                        $('#m-id').text(rjson.result.id);
+                        $('#m-nickname').text(rjson.result.nickname);
+                    }else
+                    {	$('#m-id').text('');
+                        $('#m-nickname').text('');
+                        $('#assigns_name').text('');
+                        FoxUI.toast.show('受让人手机错误，未查到此人!');
+                        isuser = false;
+                        return;
+                    }
+
+                }, true, true);
+            }else
+            {
+                FoxUI.toast.show('请输入受让人手机!');
+                return;
+            }
+        });
+
+        $('#btn-next').click(function (){
+			if ($(this).attr('submit')) {
+				return
+			}
+            var assigns = $('#assigns').val();
+            if (!assigns) {
+                FoxUI.toast.show('请输入受让人手机!');
+                return;
+            }
+            var money = $('#money').val();
+            if (!money) {
+                FoxUI.toast.show('请输入转让金额!');
+                return;
+            }
+
+            if (!isuser) {
+                FoxUI.toast.show('请输入正确的会员手机!');
+                return; 
+            }
+			
+            var withdrawmoney = "{$credit}";
+            if( parseFloat(money) > withdrawmoney){
+                FoxUI.toast.show('转让金额不能大于余额!');
+                return;
+            }
+            if (money <= 0) {
+                FoxUI.toast.show('金额必须大于0!');
+                return
+            }
+
+//            else if((money % 100) > 0){
+//                FoxUI.toast.show('金额必须为100的整数倍!');
+//                return
+//            }
+            else{
+                $(".account-pay-page").show();
+            }
+			
+			$(this).attr('submit', 1);
+            core.json('member/transfer/submit', {
+                money: money,
+                assigns:assigns
+            }, function (rjson) {
+                $('#btn-next').removeAttr('submit');
+                if(rjson.status!=1){
+                    FoxUI.toast.show(rjson.result.message);
+                    return;
+                }
+                FoxUI.toast.show('转让成功!');
+                location.href = core.getUrl('member/log',{type:'51'});
+            }, true, true);
+
+        });
+        
+      
+    });
+
+</script>
+{template 'pwd'}
+{if empty($_GPC['isnewstore']) }
+	{php $this->footerMenus()}
+{else}
+	{template '../../../plugin/newstore/template/mobile/default/_menu'}
+{/if}{template '_footer'}

@@ -1,0 +1,86 @@
+{template '_header'}
+{template 'commission/common'}
+<div class="fui-page fui-page-current page-commission-down">
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">我的团队({$total})</div>
+    </div>
+    <div class="fui-content navbar">
+        <div class="fui-list-group" id="container"></div>
+        <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+
+		<div class='content-empty' style='display:none;'>
+			<!--<i class='icon icon-group'></i><br/>暂时没有任何数据-->
+			<img src="{VCSHOP_STATIC}images/nomeb.png" style="width: 6rem;margin-bottom: .5rem;"><br/><p style="color: #999;font-size: .75rem">暂时没有任何数据</p>
+		</div>
+    </div>
+
+
+	<script id='tpl_commission_down_list' type='text/html'>
+		<%each list as user%>
+		<div class="fui-list" style="">
+			<div class="fui-list-media">
+				<%if user.avatar%>
+				<img data-lazy="<%user.avatar%>" class="round" style="width:2rem;height:2rem">
+				<%else%>
+				<i class="icon icon-my2"></i>
+				<%/if%>
+			</div>
+			<div class="fui-list-inner">
+				{if !empty($showteam['nickname'])}
+				    <div class="row">
+				        <div class="row-text" style="font-size: .6rem">昵称：<%if user.nickname%><%user.nickname%><%else%>未获取<%/if%></div>
+				    </div>
+				{/if}
+				{if !empty($showteam['mobile'])}
+				    <div class="row">
+				        <div class="row-text" >
+					  		<%if user.mobile%><a href="tel:<%user.mobile%>"><i class=' icon icon-phone' style='color:green'></i><%user.mobile%></a><%else%>未获取<%/if%>
+				     	</div>
+				    </div>
+				{/if}
+				{if !empty($showteam['agentlevel'])}
+				    <div class="row">
+				        <div class="row-text" style="font-size: .6rem">{php echo $this->set['texts']['agent']}等级：<%user.agentlevelname%></div>
+				    </div>
+				{/if}
+				{if !empty($showteam['level'])}
+				    <div class="row">
+				        <div class="row-text" style="font-size: .6rem">会员等级：<%user.memberlevelname%></div>
+				    </div>
+				{/if}
+				
+				{if !empty($showteam['agenttime'])}
+				<div class="subtitle">
+					<%if user.isagent==1 && user.status==1%>
+				    成为{php echo $this->set['texts']['agent']}时间:<%if user.agenttime=='1970-01-01 08:00' %> <%user.createtime%> <%else%> <%user.agenttime%> <%/if%>
+				    <%else%>
+				    注册时间:  <%user.createtime%>
+				    <%/if%>   
+				</div>
+				{/if}
+			</div>
+			<!-- <div class="row-remark">
+				<%if user.isagent==1 && user.status==1%>
+				<p>+<%user.commission_total%></p>
+				<p><%user.agentcount%>个成员</p>
+				<%else%>
+				<p>消费: <%user.moneycount%>{php echo $this->set['texts']['yuan']}</p>
+				<p><%user.ordercount%>个订单</p>
+				<%/if%>
+				
+			</div> -->
+		</div>
+		<%/each%>
+	</script>
+
+	<script language='javascript'>
+		require(['../addons/vcshop/plugin/commission/static/js/team.js'], function (modal) {
+			modal.init();
+		});
+	</script>
+</div>
+{php $this->footerMenus()}
+{template '_footer'}

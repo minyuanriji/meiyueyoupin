@@ -1,0 +1,169 @@
+    <form action="" {ife 'commission.star' $level}action="" method="post"{/if}  class="form-horizontal form-validate" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{$level['id']}" />
+		 <input type="hidden" name="r" value="commission.star.{if empty($level['id'])}add{else}edit{/if}" />
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">{if !empty($level['id'])}编辑{else}添加{/if}分销商等级</h4>
+            </div>
+            <div class="modal-body">
+				<div class="form-group">
+					<label class="col-lg control-label">等级</label>
+					<div class="col-sm-9 col-xs-12">
+						{ife 'commission.star' $level}
+						<select  name="level" class="form-control tp_is_default" style="width:90px;">
+							{loop $level_array $key $value}
+							<option value="{$value}" {if $level['level']==$value}selected{/if}>{$value}</option>
+							{/loop}
+						</select>
+						<span class='help-block'>数字越大等级越高</span>
+						{else}
+						<div class='form-control-static'>{$level['level']}</div>
+						{/if}
+					</div>
+				</div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label must">等级名称</label>
+                    <div class="col-sm-9 col-xs-12">
+						{ife 'commission.star' $level}
+                        <input type="text" name="levelname" class="form-control" value="{$level['levelname']}" data-rule-required='true'/>
+						{else}
+						<div class='form-control-static'>{$level['levelname']}</div>
+						{/if} 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">一级分成</label>
+                    <div class="col-sm-9 col-xs-12">
+						{ife 'commission.star' $level}
+                        <div class='input-group'>
+                        <input type="text" name="commission1" class="form-control" value="{$level['commission1']}" />
+                            <div class='input-group-addon'>元</div>
+                        </div>
+						{else}
+						<div class='form-control-static'>{$level['commission1']}%</div>
+						{/if} 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">绑定分销等级</label>
+                        <div class="col-sm-9 col-xs-12">
+                        <div class="input-group">
+                            {loop $levels $litem}
+                        	{$litem['levelname']}[{$litem['level']}]<input type="checkbox" name="bindlevel[]" value="{$litem['id']}" {if !empty($level['bindlevel']) && in_array($litem['id'],$level['bindlevel'])}checked="true"{/if}>&nbsp;&nbsp;
+                            {/loop}
+                            <!-- <select class="form-control" name="bindlevel">
+                                <option value="">--请选择等级--</option>
+                                {loop $levels $litem}
+                                <option value="{$litem['id']}" {if $level['bindlevel']==$litem['id']}selected="true"{/if}>{$litem['levelname']}[{$litem['level']}]</option>
+                                {/loop}
+                            </select> -->
+                        </div> 
+                    </div>
+                </div>
+                <!-- han 20200219 s-->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">是否绑定等级的默认星级</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'commission.star' $level}
+                        <div class='input-group'>
+                            <label class="radio-inline"><input type="radio" name="is_default" value="0" {if empty($level['is_default'])}checked{/if}> 否</label>
+                            <label class="radio-inline"><input type="radio" name="is_default" value="1" {if $level['is_default'] == 1}checked{/if}> 是</label>
+                        </div>
+                        {else}
+                        <div class='form-control-static'>{if $level['is_default'] == 1}是{else}否{/if}</div>
+                        {/if}
+                        <span class="help-block">是否绑定等级的默认星级</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">是否拥有团队提成</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'commission.star' $level}
+                        <div class='input-group'>
+                            <label class="radio-inline"><input type="radio" name="is_team" value="0" {if empty($level['is_team'])}checked{/if}> 否</label>
+                            <label class="radio-inline"><input type="radio" name="is_team" value="1" {if $level['is_team'] == 1}checked{/if}> 是</label>
+                        </div>
+                        {else}
+                        <div class='form-control-static'>{if $level['is_team'] == 1}是{else}否{/if}</div>
+                        {/if}
+                        <span class="help-block">该等级是否享受团队提成</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">团队分成</label>
+                    <div class="col-sm-9 col-xs-12">
+                       {ife 'commission.star' $level}
+                       <div class='input-group'>
+                        <input type="text" name="commissionteam" class="form-control" value="{$level['commissionteam']}" />
+                        <div class='input-group-addon'>元</div>
+                        </div>
+						{else}
+						<div class='form-control-static'>{$level['commissionteam']}元</div>
+						{/if} 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">团队管理比例</label>
+                          <div class="col-sm-9 col-xs-12">
+                      {ife 'commission.star' $level}
+                          <div class='input-group'>
+                        <input type="text" name="commissioncharge" class="form-control" value="{$level['commissioncharge']}" />
+                          <div class='input-group-addon'>%</div>
+                        </div>
+						{else}
+						<div class='form-control-static'>{$level['commissioncharge']}%</div>
+						{/if} 
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">达标条件1</label>
+                    <div class="col-sm-9 col-xs-12">
+					    {ife 'commission.star' $level}
+                        <div class='input-group'>
+							<span class='input-group-addon'>直推满</span>
+							<input type="text" name="downcount" class="form-control" value="{$level['downcount']}" />
+							<span class='input-group-addon'>个</span>
+							<select  name="downlevel" class="form-control tp_is_default" style="width:90px;">
+								<option value="-1">--推荐等级--</option>
+								{loop $levels $key $value}
+								<option value="{$value['id']}" {if $level['downlevel']==$value['id']}selected{/if}>{$value['levelname']}</option>
+								{/loop}
+							</select>
+                        </div>
+                        {else}
+							<div class='form-control-static'>直推指定等级满{$level['downcount']}个</div>
+                        {/if}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">达标条件2</label>
+                    <div class="col-sm-9 col-xs-12">
+					    {ife 'commission.star' $level}
+                        <div class='input-group'>
+							<span class='input-group-addon'>团队满</span>
+							<input type="text" name="teamcount" class="form-control" value="{$level['teamcount']}" />
+							<span class='input-group-addon'>个</span>
+							<select  name="teamlevel" class="form-control tp_is_default" style="width:90px;">
+								<option value="-1">--推荐等级--</option>
+								{loop $levels $key $value}
+								<option value="{$value['id']}" {if $level['teamlevel']==$value['id']}selected{/if}>{$value['levelname']}</option>
+								{/loop}
+							</select>
+                        </div>
+                        {else}
+							<div class='form-control-static'>团队指定等级满{$level['teamcount']}个</div>
+                        {/if}
+                    </div>
+                </div>
+                
+               
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">提交</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+</form>

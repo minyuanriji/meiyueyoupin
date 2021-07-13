@@ -1,0 +1,1 @@
+<?php if(!defined('IN_IA')) {exit('Access Denied');}if(!defined('VCSHOP_VERSION')) {define('VCSHOP_VERSION', '3.16.5');}if(!defined('VCSHOP_RELEASE')) {define('VCSHOP_RELEASE', '20190930195604');}

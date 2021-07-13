@@ -1,0 +1,70 @@
+<div class="region-goods-details row">
+    <div class="region-goods-left col-sm-2">分成</div>
+    <div class="region-goods-right col-sm-10">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">是否参与分成</label>
+            <div class="col-sm-9 col-xs-12">
+                {ife 'goods' $item}
+                <label class="radio-inline">
+                    <input type="radio"  value="0" name="nostar" {if $item['nostar']==0}checked{/if} /> 不参与分成
+                </label>
+                <label class="radio-inline">
+                    <input type="radio"  value="1" name="nostar" {if $item['nostar']==1}checked{/if} /> 参与分成
+                </label>
+                <span class="help-block">如果不参与分成，则不产生分成</span>
+                {else}
+                <div class='form-control-static'>{if $item['nostar']==1}参与分成{else}不参与分成{/if}</div>
+                {/if}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">独立规则</label>
+            <div class="col-sm-9 col-xs-12">
+                {ife 'goods' $item}
+                <label class="radio-inline">
+                    <input type="radio"  value="0" name="hasstar" {if $item['hasstar']==0}checked{/if} /> 不启用独立规则
+                </label>
+                <label class="radio-inline">
+                    <input type="radio"  value="1" name="hasstar" {if $item['hasstar']==1}checked{/if} /> 启用独立规则
+                </label>
+                <span class="help-block">启用独立设置，此商品拥有独自的收益金额,不受分销商星级金额设置限制</span>
+                {else}
+                <div class='form-control-static'>{if $item['hasstar']==1}启用独立规则{else}不启用独立规则{/if}</div>
+                {/if}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">分成设置</label>
+            <div class="col-sm-9 col-xs-12">
+                {ife 'goods' $item}
+                    <div class='input-group'>
+                        <div class='input-group-addon' style="width: 26%;">星级名称</div>
+                        <input type="text"  class="form-control" value="一级分成" readonly />
+                        <div class='input-group-addon'>元</div>
+                        <input type="text" class="form-control" value="团队分成" readonly />
+                        <div class='input-group-addon'>元</div>
+                        <input type="text" class="form-control" value="团队管理" readonly />
+                        <div class='input-group-addon'>%</div>
+                    </div>
+                    {loop $starlevel $sl}
+                    <div class='input-group'>
+                        <div class='input-group-addon' style="width: 26%;">{$sl['levelname']}[{$sl['bindlevelname']} ]</div>
+                        <input type="text" name="starbonus[bonus][{$sl['id']}][commission1]" class="form-control" value="{$item['starbonus']['bonus'][$sl['id']][commission1]}" />
+                        <div class='input-group-addon'>元</div>
+                        <input type="text" name="starbonus[bonus][{$sl['id']}][commissionteam]" class="form-control" value="{$item['starbonus']['bonus'][$sl['id']][commissionteam]}" {if $sl['is_team'] == 0}disabled{/if} />
+                        <div class='input-group-addon'>元</div>
+                        <input type="text" name="starbonus[bonus][{$sl['id']}][commissioncharge]" class="form-control" value="{$item['starbonus']['bonus'][$sl['id']][commissioncharge]}" {if $sl['is_team'] == 0}disabled{/if}/>
+                        <div class='input-group-addon'>%</div>
+                    </div>
+                    {/loop}
+                {else}
+                    {loop $levels $item}
+                        <!-- <div class='form-control-static'>
+                        
+                        </div> -->
+                    {/loop}
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
